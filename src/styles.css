@@ -208,12 +208,15 @@ body {
 .col-actions {
   width: 74px;
   text-align: center;
+}
+
+.storage-table tbody td.col-actions {
   overflow: visible;
   text-overflow: clip;
   white-space: nowrap;
 }
 
-.col-actions .btn {
+.storage-table tbody td.col-actions .btn {
   white-space: nowrap;
 }
 
