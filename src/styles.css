@@ -206,7 +206,7 @@ body {
 }
 
 .col-actions {
-  width: 74px;
+  width: 80px;
   text-align: center;
 }
 
@@ -214,6 +214,7 @@ body {
   overflow: visible;
   text-overflow: clip;
   white-space: nowrap;
+  max-width: none;
 }
 
 .storage-table tbody td.col-actions .btn {
@@ -366,32 +367,36 @@ td.editing {
 }
 
 .confirm-modal .modal-content {
-  width: 340px;
-  padding: 24px;
+  width: 300px;
+  padding: 20px 24px;
   text-align: center;
 }
 
 .confirm-modal .modal-content h3 {
   text-align: left;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  font-size: 15px;
 }
 
 .confirm-modal .confirm-message {
   font-size: 13px;
   color: #9aa0a6;
   text-align: left;
-  line-height: 1.6;
+  line-height: 1.5;
   word-break: break-all;
+  margin: 0;
 }
 
 .confirm-modal .modal-actions {
   justify-content: center;
+  margin-top: 20px;
 }
 
 .confirm-modal .btn-confirm-delete {
   background: #f28b82;
   color: #1e1f20;
-  padding: 8px 24px;
+  padding: 7px 20px;
+  font-size: 13px;
 }
 
 .confirm-modal .btn-confirm-delete:hover {
