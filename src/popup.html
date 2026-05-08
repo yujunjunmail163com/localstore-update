@@ -11,7 +11,10 @@
     <header class="header">
       <h1>LocalStorage Manager</h1>
       <div class="header-actions">
-        <input type="text" id="searchInput" placeholder="搜索 Key..." class="search-input">
+        <div class="search-wrapper">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="搜索 Key..." class="search-input">
+        </div>
         <button id="addBtn" class="btn btn-primary">+ 新增</button>
         <button id="refreshBtn" class="btn btn-secondary">刷新</button>
       </div>
@@ -34,6 +37,17 @@
 
     <div id="emptyState" class="empty-state" style="display:none;">
       <p>暂无 localStorage 数据</p>
+    </div>
+
+    <div id="confirmModal" class="modal confirm-modal" style="display:none;">
+      <div class="modal-content">
+        <h3>确认删除</h3>
+        <p class="confirm-message" id="confirmMessage"></p>
+        <div class="modal-actions">
+          <button id="confirmCancel" class="btn btn-secondary">取消</button>
+          <button id="confirmOk" class="btn btn-confirm-delete">删除</button>
+        </div>
+      </div>
     </div>
 
     <div id="addModal" class="modal" style="display:none;">

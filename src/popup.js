@@ -11,8 +11,14 @@ const Popup = (() => {
   const cancelAdd = document.getElementById('cancelAdd');
   const confirmAdd = document.getElementById('confirmAdd');
 
+  const confirmModal = document.getElementById('confirmModal');
+  const confirmMessage = document.getElementById('confirmMessage');
+  const confirmCancel = document.getElementById('confirmCancel');
+  const confirmOk = document.getElementById('confirmOk');
+
   let searchFilter = '';
   let cachedData = [];
+  let confirmResolve = null;
 
   function init() {
     InlineEditor.init(tableContainer, render);
@@ -51,10 +57,33 @@ const Popup = (() => {
     addModal.addEventListener('click', (e) => {
       if (e.target === addModal) closeModal();
     });
+
+    confirmCancel.addEventListener('click', () => {
+      confirmModal.style.display = 'none';
+      if (confirmResolve) { confirmResolve(false); confirmResolve = null; }
+    });
+
+    confirmOk.addEventListener('click', () => {
+      confirmModal.style.display = 'none';
+      if (confirmResolve) { confirmResolve(true); confirmResolve = null; }
+    });
+
+    confirmModal.addEventListener('click', (e) => {
+      if (e.target === confirmModal) {
+        confirmModal.style.display = 'none';
+        if (confirmResolve) { confirmResolve(false); confirmResolve = null; }
+      }
+    });
   }
 
   function closeModal() {
     addModal.style.display = 'none';
+  }
+
+  function showConfirm(message) {
+    confirmMessage.textContent = message;
+    confirmModal.style.display = 'flex';
+    return new Promise((resolve) => { confirmResolve = resolve; });
   }
 
   async function render() {
@@ -110,6 +139,8 @@ const Popup = (() => {
       delBtn.textContent = '删除';
       delBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
+        const confirmed = await showConfirm(`确定要删除 Key「${item.key}」吗？`);
+        if (!confirmed) return;
         await StorageManager.removeKey(item.key);
         await render();
       });
