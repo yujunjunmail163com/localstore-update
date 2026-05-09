@@ -8,11 +8,17 @@
 </head>
 <body>
   <div class="app">
+
+    <!-- ========== 顶部标题栏 ========== -->
     <header class="header">
       <h1>LocalStorage Manager</h1>
       <div class="header-actions">
+        <!-- 药丸形搜索框（带 SVG 搜索图标） -->
         <div class="search-wrapper">
-          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
           <input type="text" id="searchInput" placeholder="搜索 Key..." class="search-input">
         </div>
         <button id="addBtn" class="btn btn-primary">+ 新增</button>
@@ -20,6 +26,7 @@
       </div>
     </header>
 
+    <!-- ========== 数据表格区 ========== -->
     <div class="table-container" id="tableContainer">
       <table class="storage-table" id="storageTable">
         <thead>
@@ -31,14 +38,17 @@
           </tr>
         </thead>
         <tbody id="storageBody">
+          <!-- 由 popup.js 动态渲染 -->
         </tbody>
       </table>
     </div>
 
+    <!-- 空状态提示（无数据或加载失败时显示） -->
     <div id="emptyState" class="empty-state" style="display:none;">
       <p>暂无 localStorage 数据</p>
     </div>
 
+    <!-- ========== 删除确认弹窗 ========== -->
     <div id="confirmModal" class="modal confirm-modal" style="display:none;">
       <div class="modal-content">
         <h3>确认删除</h3>
@@ -50,6 +60,7 @@
       </div>
     </div>
 
+    <!-- ========== 新增数据弹窗 ========== -->
     <div id="addModal" class="modal" style="display:none;">
       <div class="modal-content">
         <h3>新增数据</h3>
@@ -67,8 +78,10 @@
         </div>
       </div>
     </div>
+
   </div>
 
+  <!-- JS 模块加载顺序：数据层 → 编辑层 → 主控制器 -->
   <script src="storage-manager.js"></script>
   <script src="inline-editor.js"></script>
   <script src="popup.js"></script>
