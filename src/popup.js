@@ -4,7 +4,7 @@
  * 负责整个弹出面板的逻辑：
  * - 页面加载时读取并渲染 localStorage 数据
  * - 搜索过滤
- * - 新增数据（弹窗表单）
+ * - 快速添加数据
  * - 删除数据（二次确认弹窗）
  * - 初始化本地开发环境数据
  */
@@ -15,15 +15,17 @@ const Popup = (() => {
   const tableContainer = document.getElementById('tableContainer');
   const emptyState     = document.getElementById('emptyState');
   const searchInput    = document.getElementById('searchInput');
-  const addBtn         = document.getElementById('addBtn');
   const refreshBtn     = document.getElementById('refreshBtn');
 
-  // 新增数据弹窗
-  const addModal     = document.getElementById('addModal');
-  const newKeyInput  = document.getElementById('newKey');
-  const newValueInput = document.getElementById('newValue');
-  const cancelAdd    = document.getElementById('cancelAdd');
-  const confirmAdd   = document.getElementById('confirmAdd');
+  // 顶部信息栏
+  const tabFavicon     = document.getElementById('tabFavicon');
+  const tabDomain      = document.getElementById('tabDomain');
+  const closePanel     = document.getElementById('closePanel');
+
+  // 快速添加区
+  const quickKey       = document.getElementById('quickKey');
+  const quickValue     = document.getElementById('quickValue');
+  const quickAddBtn    = document.getElementById('quickAddBtn');
 
   // 删除确认弹窗
   const confirmModal   = document.getElementById('confirmModal');
@@ -33,10 +35,10 @@ const Popup = (() => {
   const confirmClose   = document.getElementById('confirmClose');
 
   // ========== 状态变量 ==========
-  let searchFilter = '';    // 当前搜索关键字
-  let cachedData = [];      // 缓存的 localStorage 数据，避免重复请求
-  let confirmResolve = null; // 自定义确认弹窗的 Promise resolve 回调
-  const recentlyAdded = new Set(); // 最近添加的 Key，排序置顶
+  let searchFilter = '';
+  let cachedData = [];
+  let confirmResolve = null;
+  const recentlyAdded = new Set();
 
   // ========== 白名单配置（本地开发环境 Key） ==========
   const storageWhiteList = [
@@ -45,24 +47,35 @@ const Popup = (() => {
     'DMURL', 'CDAURL', 'QSURL', 'IRCURL', 'PASS_AUTH', 'AIURL'
   ];
 
-  // ========== 白名单排序映射（用于 O(1) 查找优先级） ==========
   const whiteListOrder = new Map(
     storageWhiteList.map((key, index) => [key, index])
   );
 
-  /**
-   * 初始化
-   * 绑定行内编辑器 → 绑定所有事件 → 首次加载数据
-   */
   function init() {
     InlineEditor.init(tableContainer, render);
     bindEvents();
+    loadTabInfo();
     render();
   }
 
-  /**
-   * 绑定所有事件监听
-   */
+  // ========== 加载当前标签页信息（Favicon + 域名） ==========
+  async function loadTabInfo() {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab || !tab.url) return;
+
+      const url = new URL(tab.url);
+      tabDomain.textContent = url.hostname;
+
+      if (tab.favIconUrl) {
+        tabFavicon.src = tab.favIconUrl;
+        tabFavicon.style.display = 'inline-block';
+      }
+    } catch (e) {
+      // 无法获取标签信息时静默忽略
+    }
+  }
+
   function bindEvents() {
     // 搜索框输入时实时过滤
     searchInput.addEventListener('input', (e) => {
@@ -70,47 +83,19 @@ const Popup = (() => {
       renderFromCache();
     });
 
-    // 初始化按钮：补充白名单数据后刷新
+    // 初始化按钮
     refreshBtn.addEventListener('click', initializeStorage);
 
-    // 新增按钮：打开弹窗
-    addBtn.addEventListener('click', () => {
-      newKeyInput.value = '';
-      newValueInput.value = '';
-      addModal.style.display = 'flex';
-      newKeyInput.focus();
+    // 关闭面板
+    closePanel.addEventListener('click', () => window.close());
+
+    // 快速添加
+    quickAddBtn.addEventListener('click', handleQuickAdd);
+    quickKey.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') quickValue.focus();
     });
-
-    // 取消新增
-    cancelAdd.addEventListener('click', closeModal);
-
-    // 确认新增
-    confirmAdd.addEventListener('click', async () => {
-      const key = newKeyInput.value.trim();
-      const value = newValueInput.value;
-
-      // Key 不能为空
-      if (!key) {
-        newKeyInput.focus();
-        return;
-      }
-
-      // Key 不能重复
-      const exists = await StorageManager.keyExists(key);
-      if (exists) {
-        newKeyInput.focus();
-        return;
-      }
-
-      await StorageManager.setValue(key, value);
-      recentlyAdded.add(key);
-      closeModal();
-      await render();
-    });
-
-    // 点击弹窗背景关闭（点击遮罩层区域）
-    addModal.addEventListener('click', (e) => {
-      if (e.target === addModal) closeModal();
+    quickValue.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleQuickAdd();
     });
 
     // ---- 删除确认弹窗事件 ----
@@ -139,7 +124,6 @@ const Popup = (() => {
       }
     });
 
-    // 点击遮罩层也关闭确认弹窗
     confirmModal.addEventListener('click', (e) => {
       if (e.target === confirmModal) {
         confirmModal.style.display = 'none';
@@ -151,17 +135,31 @@ const Popup = (() => {
     });
   }
 
-  /**
-   * 关闭新增数据弹窗
-   */
-  function closeModal() {
-    addModal.style.display = 'none';
+  // ========== 快速添加处理 ==========
+  async function handleQuickAdd() {
+    const key = quickKey.value.trim();
+    const value = quickValue.value;
+
+    if (!key) {
+      quickKey.focus();
+      return;
+    }
+
+    const exists = await StorageManager.keyExists(key);
+    if (exists) {
+      quickKey.focus();
+      return;
+    }
+
+    await StorageManager.setValue(key, value);
+    recentlyAdded.add(key);
+    quickKey.value = '';
+    quickValue.value = '';
+    quickKey.focus();
+    await render();
   }
 
-  /**
-   * 初始化本地开发环境数据
-   * 遍历白名单，补充缺失的 Key（默认值 http://localhost:9528），不覆盖已有数据
-   */
+  // ========== 初始化本地开发环境数据 ==========
   async function initializeStorage() {
     const defaultUrl = 'http://localhost:9528';
     let addedCount = 0;
@@ -179,10 +177,7 @@ const Popup = (() => {
     }
   }
 
-  /**
-   * 显示单按钮通知弹窗（复用确认弹窗结构，仅展示"确定"）
-   * @param {string} message - 通知内容
-   */
+  // ========== 通知弹窗（复用确认弹窗结构） ==========
   function showNotice(message) {
     const bodyEl = confirmModal.querySelector('.modal-body');
     const savedHTML = bodyEl.innerHTML;
@@ -211,11 +206,7 @@ const Popup = (() => {
     confirmModal.addEventListener('click', backdropHandler);
   }
 
-  /**
-   * 显示自定义确认弹窗
-   * @param {string} keyName - 要删除的 Key 名称
-   * @returns {Promise<boolean>} 用户点击"删除"返回 true，点击"取消"或遮罩返回 false
-   */
+  // ========== 确认弹窗 ==========
   function showConfirm(keyName) {
     confirmKey.textContent = keyName;
     confirmModal.style.display = 'flex';
@@ -224,10 +215,7 @@ const Popup = (() => {
     });
   }
 
-  /**
-   * 从 StorageManager 重新读取数据，然后渲染表格
-   * 如果读取失败（比如在 chrome:// 页面），显示错误提示
-   */
+  // ========== 数据加载 & 渲染 ==========
   async function render() {
     try {
       cachedData = await StorageManager.getAll();
@@ -241,17 +229,11 @@ const Popup = (() => {
     renderFromCache();
   }
 
-  /**
-   * 根据缓存数据渲染表格
-   * 如果有搜索关键字，先过滤再渲染
-   */
   function renderFromCache() {
-    // 根据搜索关键字过滤
     const filtered = searchFilter
       ? cachedData.filter(item => item.key.toLowerCase().includes(searchFilter))
       : cachedData;
 
-    // 排序：白名单 Key 置顶（按白名单顺序），其余保持原序
     const sorted = [...filtered].sort((a, b) => {
       const aRecent = recentlyAdded.has(a.key);
       const bRecent = recentlyAdded.has(b.key);
@@ -268,10 +250,8 @@ const Popup = (() => {
       return 0;
     });
 
-    // 清空表格
     tableBody.innerHTML = '';
 
-    // 无数据时显示空状态提示
     if (sorted.length === 0) {
       emptyState.textContent = '暂无 localStorage 数据';
       emptyState.style.display = 'block';
@@ -282,27 +262,22 @@ const Popup = (() => {
     emptyState.style.display = 'none';
     tableContainer.style.display = 'block';
 
-    // 逐行渲染
     sorted.forEach((item, index) => {
       const tr = document.createElement('tr');
       tr.dataset.key = item.key;
 
-      // 序号列
       const tdIndex = document.createElement('td');
       tdIndex.className = 'col-index';
       tdIndex.textContent = index + 1;
 
-      // Key 列
       const tdKey = document.createElement('td');
       tdKey.className = 'col-key';
       tdKey.textContent = item.key;
 
-      // Value 列
       const tdValue = document.createElement('td');
       tdValue.className = 'col-value';
       tdValue.textContent = item.value;
 
-      // 操作列（删除按钮 — 使用 iconfont 图标）
       const tdActions = document.createElement('td');
       tdActions.className = 'col-actions';
 
@@ -310,7 +285,7 @@ const Popup = (() => {
       delBtn.className = 'btn btn-danger btn-sm';
       delBtn.innerHTML = '<span class="iconfont icon-shanchu1"></span>';
       delBtn.addEventListener('click', async (e) => {
-        e.stopPropagation(); // 阻止冒泡，避免触发单元格编辑
+        e.stopPropagation();
         const confirmed = await showConfirm(item.key);
         if (!confirmed) return;
         await StorageManager.removeKey(item.key);
@@ -319,7 +294,6 @@ const Popup = (() => {
 
       tdActions.appendChild(delBtn);
 
-      // 组装行
       tr.appendChild(tdIndex);
       tr.appendChild(tdKey);
       tr.appendChild(tdValue);
@@ -331,7 +305,6 @@ const Popup = (() => {
   return { init, render };
 })();
 
-// 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', () => {
   Popup.init();
 });

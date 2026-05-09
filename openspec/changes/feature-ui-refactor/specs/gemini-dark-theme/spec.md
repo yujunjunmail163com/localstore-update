@@ -81,3 +81,27 @@
 - **WHEN** 初始化过程中补充了缺失的 Key
 - **THEN** 系统 SHALL 弹出提示弹窗，内容为"初始化完成，已自动补充缺失的开发环境配置。"
 - **AND** 若所有白名单 Key 均已存在，SHALL 不弹窗，仅刷新列表
+
+### Requirement: 页面三区块布局
+
+系统 SHALL 将页面从上到下分为三个独立区块：顶部信息栏、快速添加区、数据管理区。
+
+#### Scenario: 顶部信息栏（Header）
+- **WHEN** 页面加载完成
+- **THEN** 左侧 SHALL 显示 logo.png 图标 + 文本 "Eclin localstorage manager"
+- **AND** 右侧 SHALL 显示当前页面的 Favicon + 简短域名（如 gemini.google.com） + 关闭按钮 X
+- **AND** 点击关闭按钮 SHALL 关闭弹出面板（window.close）
+- **AND** Header SHALL 无背景色，保持简洁
+
+#### Scenario: 快速添加区（Add Section）
+- **WHEN** 页面加载完成
+- **THEN** 外层容器 SHALL 有 border: 1px solid #C7D5EB; border-radius: 4px; padding: 16px; margin-bottom: 16px
+- **AND** 内部 SHALL 从左到右排列：Key 输入框、Value 输入框、添加按钮
+- **AND** 组件间距 SHALL 为 16px
+- **AND** 输入框 SHALL 使用白色背景、1px solid #C7D5EB 边框、圆角 4px
+
+#### Scenario: 数据管理区（Management Section）
+- **WHEN** 页面加载完成
+- **THEN** 外层容器 SHALL 有 border: 1px solid #C7D5EB; border-radius: 4px; padding: 16px
+- **AND** 上方工具栏 SHALL 包含搜索框、初始化按钮，间距 16px
+- **AND** 工具栏与数据列表之间 SHALL 有 16px 垂直间距

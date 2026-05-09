@@ -12,7 +12,7 @@ body {
   font-family: Arial, "Calibri", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "\5FAE\8F6F\96C5\9ED1", sans-serif;
   background: #ffffff;
   color: #333333;
-  width: 720px;
+  width: 620px;
   min-height: 420px;
 }
 
@@ -21,39 +21,124 @@ body {
 }
 
 /* ==========================================================
-   顶部 Header（标题 + 操作区）
+   顶部信息栏（Header）
    ========================================================== */
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  gap: 12px;
-  flex-wrap: wrap;
+  margin-bottom: 16px;
 }
 
-.header h1 {
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.header-title {
   font-size: 16px;
   font-weight: 600;
   color: #333333;
   white-space: nowrap;
 }
 
-.header-actions {
+.header-right {
   display: flex;
-  gap: 8px;
   align-items: center;
+  gap: 8px;
+}
+
+.header-favicon {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+}
+
+.header-domain {
+  font-size: 13px;
+  color: #637598;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.btn-icon {
+  background: transparent;
+  border: none;
+  color: #9aa0a6;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.btn-icon:hover {
+  color: #333333;
+  background: #f0f0f0;
 }
 
 /* ==========================================================
-   搜索框（方角风格）
+   快速添加区（Add Section）
+   ========================================================== */
+
+.add-section {
+  border: 1px solid #C7D5EB;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.add-section-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.add-section-inner .form-input {
+  flex: 1;
+  height: 32px;
+}
+
+/* ==========================================================
+   数据管理区（Management Section）
+   ========================================================== */
+
+.management-section {
+  border: 1px solid #C7D5EB;
+  border-radius: 4px;
+  padding: 16px;
+}
+
+/* 工具栏 */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* ==========================================================
+   搜索框
    ========================================================== */
 
 .search-wrapper {
   position: relative;
   display: flex;
   align-items: center;
+  flex: 1;
 }
 
 .search-icon {
@@ -75,7 +160,7 @@ body {
   border-radius: 4px;
   font-size: 14px;
   outline: none;
-  width: 180px;
+  width: 100%;
   height: 32px;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   font-family: inherit;
@@ -112,35 +197,33 @@ body {
   white-space: nowrap;
 }
 
-/* 点击缩放质感 */
 .btn:active {
   transform: scale(0.97);
 }
 
-/* 主按钮：#003AA8 蓝色 */
 .btn-primary {
   background: #003AA8;
   color: #ffffff;
   border-color: #003AA8;
 }
+
 .btn-primary:hover {
   background: #3361b9 !important;
   border-color: #3361b9 !important;
   color: #fff !important;
 }
 
-/* 次要按钮：透明背景 + 浅色边框 */
 .btn-secondary {
   background: transparent;
   color: #333333;
   border: 1px solid #C7D5EB;
 }
+
 .btn-secondary:hover {
   background: #f5f7fa;
   border-color: #b0bdd0;
 }
 
-/* 删除按钮：轻量图标风格 */
 .btn-danger {
   background: transparent;
   color: #637598;
@@ -171,6 +254,10 @@ body {
    数据表格
    ========================================================== */
 
+.table-wrapper {
+  margin-top: 0;
+}
+
 .table-container {
   overflow-x: auto;
   border: 1px solid #ebeef5;
@@ -183,7 +270,6 @@ body {
   table-layout: fixed;
 }
 
-/* 表头 */
 .storage-table thead th {
   background: #e7ebf3;
   padding: 0 16px;
@@ -199,7 +285,6 @@ body {
   vertical-align: middle;
 }
 
-/* 表格单元格（全局默认） */
 .storage-table tbody td {
   padding: 10px 16px;
   border-bottom: 1px solid #ebeef5;
@@ -217,12 +302,9 @@ body {
   background: #f5f7fa;
 }
 
-/* 最后一行去掉底边框 */
 .storage-table tbody tr:last-child td {
   border-bottom: none;
 }
-
-/* --- 列宽 & 特殊样式 --- */
 
 .col-index {
   width: 56px;
@@ -245,13 +327,11 @@ body {
   color: #333333;
 }
 
-/* Key 和 Value 列 hover 微高亮 */
 .col-value:hover,
 .col-key:hover {
   background: rgba(0, 58, 168, 0.04);
 }
 
-/* 操作列：确保按钮完整显示 */
 .col-actions {
   width: 80px;
   text-align: center;
@@ -272,13 +352,11 @@ body {
    行内编辑态（淡蓝阴影 + 单边框）
    ========================================================== */
 
-/* 编辑中的单元格 */
 td.editing {
   padding: 6px 8px;
   background: rgba(0, 58, 168, 0.03);
 }
 
-/* Key / Value 编辑输入框 */
 .inline-input {
   width: 100%;
   background: #ffffff;
@@ -298,7 +376,6 @@ td.editing {
   box-shadow: 0 0 0 2px rgba(0, 58, 168, 0.08);
 }
 
-/* Value 多行编辑 textarea */
 .inline-textarea {
   width: 100%;
   background: #ffffff;
@@ -322,7 +399,7 @@ td.editing {
 }
 
 /* ==========================================================
-   提示气泡（如 Key 重名提示）
+   提示气泡
    ========================================================== */
 
 .tooltip {
@@ -392,7 +469,6 @@ td.editing {
   font-weight: 600;
 }
 
-/* 表单分组 */
 .form-group {
   margin-bottom: 16px;
 }
@@ -424,11 +500,14 @@ td.editing {
   box-shadow: 0 0 0 2px rgba(0, 58, 168, 0.08);
 }
 
+textarea.form-input {
+  resize: none;
+}
+
 .form-input::placeholder {
   color: #b0b8c9;
 }
 
-/* 弹窗底部按钮区 */
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -446,7 +525,6 @@ td.editing {
   border-radius: 4px;
 }
 
-/* 弹窗头部（贴顶 + 底部贯穿分割线） */
 .confirm-modal .modal-header {
   display: flex;
   align-items: center;
@@ -464,7 +542,6 @@ td.editing {
   line-height: 22px;
 }
 
-/* 头部关闭图标按钮 */
 .btn-close {
   background: transparent;
   border: none;
@@ -484,7 +561,6 @@ td.editing {
   background: #f0f0f0;
 }
 
-/* 弹窗主体 */
 .confirm-modal .modal-body {
   padding: 24px;
 }
@@ -500,7 +576,6 @@ td.editing {
   word-break: break-all;
 }
 
-/* 弹窗底部 */
 .confirm-modal .modal-footer {
   display: flex;
   justify-content: flex-end;

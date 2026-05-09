@@ -6,76 +6,96 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Local Storage Manager</title>
   <link rel="stylesheet" href="styles.css">
-
-  <!-- iconfont 图标字体（本地引入，避免 Chrome 扩展协议问题） -->
   <link rel="stylesheet" href="iconfont.css" />
-
-
 </head>
 
 <body>
   <div class="app">
 
-    <!-- ========== 顶部标题栏 ========== -->
+    <!-- ========== 顶部信息栏 ========== -->
     <header class="header">
-      <h1>Ecc localstorage manager</h1>
-      <div class="header-actions">
-        <!-- 药丸形搜索框（带 SVG 搜索图标） -->
+      <div class="header-left">
+        <img src="logo.png" alt="logo" class="header-logo" />
+        <span class="header-title">Eclin localstorage manager</span>
+      </div>
+      <div class="header-right">
+        <img id="tabFavicon" class="header-favicon" src="" alt="" style="display:none;" />
+        <span id="tabDomain" class="header-domain"></span>
+        <button id="closePanel" class="btn-icon" aria-label="关闭">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ========== 快速添加区 ========== -->
+    <section class="add-section">
+      <div class="add-section-inner">
+        <input type="text" id="quickKey" class="form-input" placeholder="输入 Key" />
+        <input type="text" id="quickValue" class="form-input" placeholder="输入 Value" />
+        <button id="quickAddBtn" class="btn btn-primary">添加</button>
+      </div>
+    </section>
+
+    <!-- ========== 数据管理区 ========== -->
+    <section class="management-section">
+      <!-- 工具栏 -->
+      <div class="toolbar">
         <div class="search-wrapper">
           <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <input type="text" id="searchInput" placeholder="搜索 Key..." class="search-input">
+          <input type="text" id="searchInput" placeholder="搜索 Key..." class="search-input" />
         </div>
-        <button id="addBtn" class="btn btn-primary">添加</button>
         <button id="refreshBtn" class="btn btn-secondary">初始化</button>
       </div>
-    </header>
 
-    <!-- ========== 数据表格区 ========== -->
-    <div class="table-container" id="tableContainer">
-      <table class="storage-table" id="storageTable">
-        <thead>
-          <tr>
-            <th class="col-index">#</th>
-            <th class="col-key">Key</th>
-            <th class="col-value">Value</th>
-            <th class="col-actions">操作</th>
-          </tr>
-        </thead>
-        <tbody id="storageBody">
-          <!-- 由 popup.js 动态渲染 -->
-        </tbody>
-      </table>
-    </div>
+      <!-- 数据表格 -->
+      <div class="table-wrapper">
+        <div class="table-container" id="tableContainer">
+          <table class="storage-table" id="storageTable">
+            <thead>
+              <tr>
+                <th class="col-index">#</th>
+                <th class="col-key">Key</th>
+                <th class="col-value">Value</th>
+                <th class="col-actions">操作</th>
+              </tr>
+            </thead>
+            <tbody id="storageBody">
+            </tbody>
+          </table>
+        </div>
 
-    <!-- 空状态提示（无数据或加载失败时显示） -->
-    <div id="emptyState" class="empty-state" style="display:none;">
-      <p>暂无 localStorage 数据</p>
-    </div>
+        <div id="emptyState" class="empty-state" style="display:none;">
+          <p>暂无 localStorage 数据</p>
+        </div>
+      </div>
+    </section>
 
-    <!-- ========== 删除确认弹窗（Header / Body / Footer 结构） ========== -->
+    <!-- ========== 删除确认弹窗 ========== -->
     <div id="confirmModal" class="modal confirm-modal" style="display:none;">
       <div class="modal-content">
-        <!-- 头部：标题 + 关闭图标 -->
         <div class="modal-header">
           <span class="modal-title">提示</span>
           <button id="confirmClose" class="btn-close" aria-label="关闭">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
-        <!-- 主体：提示内容 -->
         <div class="modal-body">
           <p class="confirm-message">
             确定删除：【<span id="confirmKey"></span>】吗？
           </p>
         </div>
-        <!-- 底部：操作按钮 -->
         <div class="modal-footer">
           <button id="confirmCancel" class="btn btn-secondary">取消</button>
           <button id="confirmOk" class="btn btn-primary">确定</button>
@@ -83,28 +103,8 @@
       </div>
     </div>
 
-    <!-- ========== 新增数据弹窗 ========== -->
-    <div id="addModal" class="modal" style="display:none;">
-      <div class="modal-content">
-        <h3>新增</h3>
-        <div class="form-group">
-          <label>Key</label>
-          <input type="text" id="newKey" class="form-input" placeholder="输入 Key">
-        </div>
-        <div class="form-group">
-          <label>Value</label>
-          <textarea id="newValue" class="form-input" rows="3" placeholder="输入 Value"></textarea>
-        </div>
-        <div class="modal-actions">
-          <button id="cancelAdd" class="btn btn-secondary">取消</button>
-          <button id="confirmAdd" class="btn btn-primary">确定</button>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- JS 模块加载顺序：数据层 → 编辑层 → 主控制器 -->
   <script src="storage-manager.js"></script>
   <script src="inline-editor.js"></script>
   <script src="popup.js"></script>
