@@ -8,6 +8,7 @@
  * - 删除数据（二次确认弹窗）
  * - 初始化本地开发环境数据
  * - 快速跳转导航
+ * - 环境快速切换（白名单 Key 重命名）
  */
 const Popup = (() => {
 
@@ -59,9 +60,25 @@ const Popup = (() => {
     storageWhiteList.map((key, index) => [key, index])
   );
 
+  const whiteListSet = new Set(storageWhiteList);
+
+  function isWhiteListKey(key) {
+    if (whiteListSet.has(key)) return true;
+    if (key.endsWith('1')) {
+      return whiteListSet.has(key.slice(0, -1));
+    }
+    return false;
+  }
+
+  function getBaseOrder(key) {
+    const base = key.endsWith('1') ? key.slice(0, -1) : key;
+    return whiteListOrder.get(base);
+  }
+
   // ========== 快速跳转链接配置 ==========
   const jumpLinks = [
-    { name: '一临云-前端公共组件库', url: 'http://webpublic.eclincloud.net' }
+    { name: '一临云-前端公共组件库', url: 'http://webpublic.eclincloud.net' },
+    { name: '一临云-蓝湖', url: 'https://lanhuapp.com/dashboard/#/item?tid=378d5862-d31f-4f20-bf94-f5fadbb800af' },
   ];
 
   function init() {
@@ -202,6 +219,21 @@ const Popup = (() => {
     jumpModal.style.display = 'none';
   }
 
+  // ========== 环境快速切换（白名单 Key 重命名） ==========
+  async function toggleEnvironment(key) {
+    const oldKey = key;
+    const newKey = key.endsWith('1') ? key.slice(0, -1) : key + '1';
+
+    await StorageManager.renameKey(oldKey, newKey);
+
+    if (recentlyAdded.has(oldKey)) {
+      recentlyAdded.delete(oldKey);
+      recentlyAdded.add(newKey);
+    }
+
+    await render();
+  }
+
   // ========== 初始化本地开发环境数据 ==========
   async function initializeStorage() {
     const defaultUrl = 'http://localhost:9528';
@@ -283,8 +315,8 @@ const Popup = (() => {
       if (aRecent && !bRecent) return -1;
       if (!aRecent && bRecent) return 1;
 
-      const aOrder = whiteListOrder.get(a.key);
-      const bOrder = whiteListOrder.get(b.key);
+      const aOrder = getBaseOrder(a.key);
+      const bOrder = getBaseOrder(b.key);
       const aInList = aOrder !== undefined;
       const bInList = bOrder !== undefined;
       if (aInList && bInList) return aOrder - bOrder;
@@ -323,6 +355,18 @@ const Popup = (() => {
 
       const tdActions = document.createElement('td');
       tdActions.className = 'col-actions';
+
+      if (isWhiteListKey(item.key)) {
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'btn btn-danger btn-sm';
+        toggleBtn.innerHTML = '<span class="iconfont icon-ercisuiji"></span>';
+        toggleBtn.title = item.key.endsWith('1') ? '切回本地' : '切至线上';
+        toggleBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          await toggleEnvironment(item.key);
+        });
+        tdActions.appendChild(toggleBtn);
+      }
 
       const delBtn = document.createElement('button');
       delBtn.className = 'btn btn-danger btn-sm';

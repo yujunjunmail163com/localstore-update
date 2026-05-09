@@ -125,3 +125,38 @@
 #### Scenario: 链接配置
 - **WHEN** 需要新增跳转链接
 - **THEN** 仅需在 popup.js 的 jumpLinks 数组中追加 { name, url } 对象即可
+
+### Requirement: 环境快速切换
+
+系统 SHALL 为白名单 Key 提供"环境快速切换"功能，通过 Key 重命名实现本地/线上环境切换。
+
+#### Scenario: 切换按钮显示条件
+- **WHEN** 表格渲染完成
+- **THEN** 属于 storageWhiteList 的 Key SHALL 在操作列显示切换图标按钮（icon-ercisuiji）
+- **AND** 白名单 Key 的末尾带 1 的变体（如 EDCURL1）SHALL 同样显示切换按钮
+- **AND** 非白名单 Key SHALL 不显示切换按钮
+
+#### Scenario: 切至线上（状态 A → B）
+- **WHEN** 用户点击白名单 Key（如 EDCURL）的切换按钮
+- **THEN** 系统 SHALL 读取原 Key 的 Value
+- **AND** 将 Value 写入新 Key（原 Key + "1"，如 EDCURL1）
+- **AND** 删除原 Key（EDCURL）
+- **AND** 自动刷新列表
+
+#### Scenario: 切回本地（状态 B → A）
+- **WHEN** 用户点击末尾带 1 的 Key（如 EDCURL1）的切换按钮
+- **THEN** 系统 SHALL 读取原 Key 的 Value
+- **AND** 将 Value 写入去掉末尾 1 的 Key（如 EDCURL）
+- **AND** 删除原 Key（EDCURL1）
+- **AND** 自动刷新列表
+
+#### Scenario: 切换后排序保持
+- **WHEN** Key 切换后名称变为带 1 的形式（如 EDCURL1）
+- **THEN** 该 Key SHALL 依然排在列表最上方
+- **AND** 排序 SHALL 遵循 storageWhiteList 定义的原始顺序（基于去掉末尾 1 的基础名称匹配）
+
+#### Scenario: 切换按钮样式
+- **WHEN** 切换按钮渲染完成
+- **THEN** 图标 SHALL 使用 icon-ercisuiji（与删除按钮 icon-shanchu1 保持一致的写法和大小）
+- **AND** 按钮 SHALL 位于删除按钮左侧
+- **AND** hover 提示 SHALL 为"切至线上"或"切回本地"（根据当前 Key 名动态显示）
