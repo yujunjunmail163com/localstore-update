@@ -30,6 +30,7 @@ const Popup = (() => {
   const confirmMessage = document.getElementById('confirmMessage');
   const confirmCancel  = document.getElementById('confirmCancel');
   const confirmOk      = document.getElementById('confirmOk');
+  const confirmClose   = document.getElementById('confirmClose');
 
   // ========== 状态变量 ==========
   let searchFilter = '';    // 当前搜索关键字
@@ -101,6 +102,14 @@ const Popup = (() => {
     // ---- 删除确认弹窗事件 ----
 
     confirmCancel.addEventListener('click', () => {
+      confirmModal.style.display = 'none';
+      if (confirmResolve) {
+        confirmResolve(false);
+        confirmResolve = null;
+      }
+    });
+
+    confirmClose.addEventListener('click', () => {
       confirmModal.style.display = 'none';
       if (confirmResolve) {
         confirmResolve(false);

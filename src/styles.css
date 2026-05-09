@@ -438,47 +438,77 @@ td.editing {
 }
 
 /* ==========================================================
-   删除确认弹窗（紧凑样式）
+   确认弹窗（结构化 Header / Body / Footer）
    ========================================================== */
 
 .confirm-modal .modal-content {
-  width: 320px;
-  padding: 20px 24px;
-  text-align: center;
+  width: 400px;
+  padding: 24px;
+  border-radius: 4px;
 }
 
-.confirm-modal .modal-content h3 {
-  text-align: left;
-  margin-bottom: 8px;
-  font-size: 15px;
+/* 弹窗头部 */
+.confirm-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 55px;
+}
+
+.confirm-modal .modal-header h3 {
+  font-family: "PingFang SC", Arial, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #282F3C;
+  line-height: 22px;
+  margin: 0;
+}
+
+/* 头部关闭按钮 */
+.btn-close {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: #9aa0a6;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.btn-close:hover {
+  color: #333333;
+  background: #f0f0f0;
+}
+
+/* 头部与主体之间的分割线 */
+.modal-divider {
+  height: 1px;
+  background: #E7EBF3;
+  margin: 0;
+}
+
+/* 弹窗主体 */
+.confirm-modal .modal-body {
+  padding: 16px 0;
 }
 
 .confirm-modal .confirm-message {
-  font-size: 13px;
+  font-size: 14px;
   color: #637598;
-  text-align: left;
   line-height: 1.5;
   word-break: break-all;
   margin: 0;
 }
 
-.confirm-modal .modal-actions {
-  justify-content: center;
-  margin-top: 20px;
-}
-
-/* 确认删除按钮 */
-.confirm-modal .btn-confirm-delete {
-  background: #d94a4a;
-  color: #ffffff;
-  padding: 0 20px;
-  height: 32px;
-  font-size: 14px;
-  border-radius: 4px;
-  border: none;
-  width: auto;
-}
-
-.confirm-modal .btn-confirm-delete:hover {
-  background: #c43c3c;
+/* 弹窗底部 */
+.confirm-modal .modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
