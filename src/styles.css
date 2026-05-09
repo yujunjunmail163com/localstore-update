@@ -338,6 +338,13 @@ body {
   text-align: center;
 }
 
+.btn-placeholder {
+  display: inline-block;
+  width: 36px;
+  height: 22px;
+  vertical-align: middle;
+}
+
 .storage-table tbody td.col-actions {
   overflow: visible;
   text-overflow: clip;

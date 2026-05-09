@@ -355,13 +355,17 @@ const Popup = (() => {
       if (isWhiteListKey(item.key)) {
         const toggleBtn = document.createElement('button');
         toggleBtn.className = 'btn btn-danger btn-sm';
-        toggleBtn.innerHTML = '<span class="iconfont icon-ercisuiji"></span>';
+        toggleBtn.innerHTML = '<span class="iconfont icon-zhongxinshenhe"></span>';
         toggleBtn.title = item.key.endsWith('1') ? '切回本地' : '切至线上';
         toggleBtn.addEventListener('click', async (e) => {
           e.stopPropagation();
           await toggleEnvironment(item.key);
         });
         tdActions.appendChild(toggleBtn);
+      } else {
+        const placeholder = document.createElement('span');
+        placeholder.className = 'btn-placeholder';
+        tdActions.appendChild(placeholder);
       }
 
       const delBtn = document.createElement('button');
