@@ -214,7 +214,7 @@ const Popup = (() => {
 
       const delBtn = document.createElement('button');
       delBtn.className = 'btn btn-danger btn-sm';
-      delBtn.innerHTML = '<span class="iconfont icon-shanchu"></span>';
+      delBtn.innerHTML = '<span class="iconfont icon-shanchu1"></span>';
       delBtn.addEventListener('click', async (e) => {
         e.stopPropagation(); // 阻止冒泡，避免触发单元格编辑
         const confirmed = await showConfirm(`确定要删除 Key「${item.key}」吗？`);
