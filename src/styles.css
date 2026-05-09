@@ -616,3 +616,7 @@ textarea.form-input {
   text-decoration: underline;
   color: #3361b9;
 }
+
+#jumpModal .modal-body {
+  padding-bottom: 32px;
+}

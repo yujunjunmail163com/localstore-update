@@ -28,8 +28,6 @@ const Popup = (() => {
   const jumpBtn        = document.getElementById('jumpBtn');
   const jumpModal      = document.getElementById('jumpModal');
   const jumpList       = document.getElementById('jumpList');
-  const jumpOk         = document.getElementById('jumpOk');
-  const jumpClose      = document.getElementById('jumpClose');
 
   // 快速添加区
   const quickKey       = document.getElementById('quickKey');
@@ -121,8 +119,6 @@ const Popup = (() => {
 
     // 快速跳转
     jumpBtn.addEventListener('click', showJumpModal);
-    jumpOk.addEventListener('click', closeJumpModal);
-    jumpClose.addEventListener('click', closeJumpModal);
     jumpModal.addEventListener('click', (e) => {
       if (e.target === jumpModal) closeJumpModal();
     });
