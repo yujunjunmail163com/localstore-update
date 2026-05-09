@@ -103,5 +103,25 @@
 #### Scenario: 数据管理区（Management Section）
 - **WHEN** 页面加载完成
 - **THEN** 外层容器 SHALL 有 border: 1px solid #C7D5EB; border-radius: 4px; padding: 16px
-- **AND** 上方工具栏 SHALL 包含搜索框、初始化按钮，间距 16px
+- **AND** 上方工具栏 SHALL 包含搜索框、初始化按钮、快速跳转按钮，间距 16px
 - **AND** 工具栏与数据列表之间 SHALL 有 16px 垂直间距
+
+### Requirement: 快速跳转导航
+
+系统 SHALL 提供"快速跳转"功能，方便开发者快速访问常用开发环境。
+
+#### Scenario: 按钮样式
+- **WHEN** 页面加载完成
+- **THEN** "初始化"按钮 SHALL 为主要风格（底色 #003AA8，白字）
+- **AND** "快速跳转"按钮 SHALL 为次要风格（白色背景，1px solid #C7D5EB 边框）
+
+#### Scenario: 跳转弹窗
+- **WHEN** 用户点击"快速跳转"按钮
+- **THEN** SHALL 弹出结构化弹窗，标题为"快速跳转"
+- **AND** 弹窗主体 SHALL 动态渲染 jumpLinks 列表
+- **AND** 点击链接文本 SHALL 通过 chrome.tabs.create 打开新标签页跳转
+- **AND** 链接文本 SHALL 为蓝色（#003AA8），hover 时显示下划线
+
+#### Scenario: 链接配置
+- **WHEN** 需要新增跳转链接
+- **THEN** 仅需在 popup.js 的 jumpLinks 数组中追加 { name, url } 对象即可

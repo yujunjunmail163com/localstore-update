@@ -583,3 +583,36 @@ textarea.form-input {
   gap: 8px;
   padding: 0 24px 24px;
 }
+
+/* ==========================================================
+   快速跳转链接列表
+   ========================================================== */
+
+.jump-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.jump-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.jump-list li:last-child {
+  border-bottom: none;
+}
+
+.jump-list a {
+  color: #003AA8;
+  text-decoration: none;
+  font-size: 14px;
+  line-height: 22px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.jump-list a:hover {
+  text-decoration: underline;
+  color: #3361b9;
+}

@@ -7,6 +7,7 @@
  * - 快速添加数据
  * - 删除数据（二次确认弹窗）
  * - 初始化本地开发环境数据
+ * - 快速跳转导航
  */
 const Popup = (() => {
 
@@ -21,6 +22,13 @@ const Popup = (() => {
   const tabFavicon     = document.getElementById('tabFavicon');
   const tabDomain      = document.getElementById('tabDomain');
   const closePanel     = document.getElementById('closePanel');
+
+  // 快速跳转
+  const jumpBtn        = document.getElementById('jumpBtn');
+  const jumpModal      = document.getElementById('jumpModal');
+  const jumpList       = document.getElementById('jumpList');
+  const jumpOk         = document.getElementById('jumpOk');
+  const jumpClose      = document.getElementById('jumpClose');
 
   // 快速添加区
   const quickKey       = document.getElementById('quickKey');
@@ -50,6 +58,11 @@ const Popup = (() => {
   const whiteListOrder = new Map(
     storageWhiteList.map((key, index) => [key, index])
   );
+
+  // ========== 快速跳转链接配置 ==========
+  const jumpLinks = [
+    { name: '一临云-前端公共组件库', url: 'http://webpublic.eclincloud.net' }
+  ];
 
   function init() {
     InlineEditor.init(tableContainer, render);
@@ -88,6 +101,14 @@ const Popup = (() => {
 
     // 关闭面板
     closePanel.addEventListener('click', () => window.close());
+
+    // 快速跳转
+    jumpBtn.addEventListener('click', showJumpModal);
+    jumpOk.addEventListener('click', closeJumpModal);
+    jumpClose.addEventListener('click', closeJumpModal);
+    jumpModal.addEventListener('click', (e) => {
+      if (e.target === jumpModal) closeJumpModal();
+    });
 
     // 快速添加
     quickAddBtn.addEventListener('click', handleQuickAdd);
@@ -157,6 +178,28 @@ const Popup = (() => {
     quickValue.value = '';
     quickKey.focus();
     await render();
+  }
+
+  // ========== 快速跳转弹窗 ==========
+  function showJumpModal() {
+    jumpList.innerHTML = '';
+    jumpLinks.forEach(link => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.textContent = link.name;
+      a.href = link.url;
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        chrome.tabs.create({ url: link.url });
+      });
+      li.appendChild(a);
+      jumpList.appendChild(li);
+    });
+    jumpModal.style.display = 'flex';
+  }
+
+  function closeJumpModal() {
+    jumpModal.style.display = 'none';
   }
 
   // ========== 初始化本地开发环境数据 ==========
