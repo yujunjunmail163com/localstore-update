@@ -208,13 +208,13 @@ const Popup = (() => {
       tdValue.className = 'col-value';
       tdValue.textContent = item.value;
 
-      // 操作列（删除按钮）
+      // 操作列（删除按钮 — 使用 iconfont 图标）
       const tdActions = document.createElement('td');
       tdActions.className = 'col-actions';
 
       const delBtn = document.createElement('button');
       delBtn.className = 'btn btn-danger btn-sm';
-      delBtn.textContent = '删除';
+      delBtn.innerHTML = '<span class="iconfont icon-shanchu"></span>';
       delBtn.addEventListener('click', async (e) => {
         e.stopPropagation(); // 阻止冒泡，避免触发单元格编辑
         const confirmed = await showConfirm(`确定要删除 Key「${item.key}」吗？`);

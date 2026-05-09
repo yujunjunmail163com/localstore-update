@@ -1,0 +1,18 @@
+@font-face {
+  font-family: "iconfont";
+  src: url('https://at.alicdn.com/t/c/font_3282781_5xfmp3o895.woff2?t=1776332397501') format('woff2'),
+       url('https://at.alicdn.com/t/c/font_3282781_5xfmp3o895.woff?t=1776332397501') format('woff'),
+       url('https://at.alicdn.com/t/c/font_3282781_5xfmp3o895.ttf?t=1776332397501') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-shanchu:before {
+  content: "\e797";
+}

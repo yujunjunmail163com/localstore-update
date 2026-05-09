@@ -9,7 +9,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: Arial, "Calibri", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "\5FAE\8F6F\96C5\9ED1", sans-serif;
   background: #ffffff;
   color: #333333;
   width: 720px;
@@ -140,7 +140,7 @@ body {
   border-color: #b0bdd0;
 }
 
-/* 删除按钮：轻量文字风格 */
+/* 删除按钮：轻量图标风格 */
 .btn-danger {
   background: transparent;
   color: #637598;
@@ -151,11 +151,13 @@ body {
   font-size: 14px;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: none;
+  line-height: 0;
 }
-.btn-danger:hover {
-  color: #003AA8;
-  background: rgba(0, 58, 168, 0.06);
+
+.btn-danger .iconfont {
+  font-size: 16px;
+  line-height: 1;
 }
 
 .btn-sm {
