@@ -1,20 +1,28 @@
 ## ADDED Requirements
 
-### Requirement: Material Design 3 深色主题
+### Requirement: 白色商务风格主题
 
-系统 SHALL 使用 Material Design 3 风格的深色配色方案，包含主背景、表面色、强调色和文本色的完整色板。
+系统 SHALL 使用白色商务风格配色方案，替代之前的 Material Design 3 深色主题。
 
-#### Scenario: 页面加载时显示深色主题
+#### Scenario: 页面加载时显示白色主题
 - **WHEN** 用户打开扩展弹出面板
-- **THEN** 页面背景 SHALL 为 #1e1f20
-- **AND** 表格表头和卡片区域 SHALL 使用 #282a2c
-- **AND** 强调色（按钮、链接、高亮）SHALL 为 #8ab4f8
+- **THEN** 页面背景 SHALL 为 #ffffff
+- **AND** 表头背景 SHALL 为 #e7ebf3
+- **AND** 表头文字颜色 SHALL 为 #637598
 
-#### Scenario: 层次感通过阴影和边框区分
+#### Scenario: 按钮样式
 - **WHEN** 页面渲染完成
-- **THEN** 表格容器 SHALL 有 1px solid rgba(255,255,255,0.1) 的微弱边框
-- **AND** 表头 SHALL 有 0 2px 8px rgba(0,0,0,0.3) 的细腻阴影
+- **THEN** 所有顶部按钮 SHALL 为 width: 74px; height: 32px; border-radius: 4px; font-size: 14px
+- **AND** 新增按钮 SHALL 为底色 #003AA8，文字 #fff，无边框
+- **AND** 刷新按钮 SHALL 为背景透明，边框 1px solid #C7D5EB
 
-#### Scenario: 全局过渡动画
-- **WHEN** 任何可交互元素的状态发生变化（悬停、聚焦、编辑）
-- **THEN** 变化 SHALL 以 transition: all 0.2s ease 的平滑过渡呈现
+#### Scenario: 搜索框样式
+- **WHEN** 页面渲染完成
+- **THEN** 搜索框 SHALL 为 border-radius: 4px
+- **AND** 搜索框 SHALL 有清晰的浅色边框
+
+#### Scenario: 表格样式
+- **WHEN** 表格渲染完成
+- **THEN** 表格外围 SHALL 为 border-radius: 4px
+- **AND** 内部分隔线 SHALL 为 1px solid #ebeef5
+- **AND** 删除按钮 SHALL 为 border-radius: 4px; font-size: 14px; color: #637598
