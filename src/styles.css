@@ -381,8 +381,6 @@ td.editing {
   border: 1px solid #ebeef5;
   border-radius: 8px;
   padding: 24px;
-  width: 400px;
-  max-width: 90%;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 
@@ -443,35 +441,34 @@ td.editing {
 
 .confirm-modal .modal-content {
   width: 400px;
-  padding: 24px;
+  padding: 0;
   border-radius: 4px;
 }
 
-/* 弹窗头部 */
+/* 弹窗头部（贴顶 + 底部贯穿分割线） */
 .confirm-modal .modal-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   height: 55px;
+  padding: 0 24px;
+  border-bottom: 1px solid #E7EBF3;
 }
 
-.confirm-modal .modal-header h3 {
+.confirm-modal .modal-title {
   font-family: "PingFang SC", Arial, sans-serif;
   font-weight: 600;
   font-size: 16px;
   color: #282F3C;
   line-height: 22px;
-  margin: 0;
 }
 
-/* 头部关闭按钮 */
+/* 头部关闭图标按钮 */
 .btn-close {
   background: transparent;
   border: none;
-  font-size: 22px;
   color: #9aa0a6;
   cursor: pointer;
-  line-height: 1;
   padding: 0;
   width: 24px;
   height: 24px;
@@ -486,24 +483,20 @@ td.editing {
   background: #f0f0f0;
 }
 
-/* 头部与主体之间的分割线 */
-.modal-divider {
-  height: 1px;
-  background: #E7EBF3;
-  margin: 0;
-}
-
 /* 弹窗主体 */
 .confirm-modal .modal-body {
-  padding: 16px 0;
+  padding: 24px;
 }
 
 .confirm-modal .confirm-message {
+  height: 60px;
+  font-family: "PingFang SC", Arial, sans-serif;
+  font-weight: 400;
   font-size: 14px;
-  color: #637598;
-  line-height: 1.5;
-  word-break: break-all;
+  color: #282F3C;
+  line-height: 22px;
   margin: 0;
+  word-break: break-all;
 }
 
 /* 弹窗底部 */
@@ -511,4 +504,5 @@ td.editing {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+  padding: 0 24px 24px;
 }

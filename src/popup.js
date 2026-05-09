@@ -27,7 +27,7 @@ const Popup = (() => {
 
   // 删除确认弹窗
   const confirmModal   = document.getElementById('confirmModal');
-  const confirmMessage = document.getElementById('confirmMessage');
+  const confirmKey     = document.getElementById('confirmKey');
   const confirmCancel  = document.getElementById('confirmCancel');
   const confirmOk      = document.getElementById('confirmOk');
   const confirmClose   = document.getElementById('confirmClose');
@@ -145,11 +145,12 @@ const Popup = (() => {
   }
 
   /**
-   * 显示自定义确认弹窗（替代丑陋的原生 confirm）
-   * 返回 Promise，用户点击"删除" resolve(true)，点击"取消"或遮罩 resolve(false)
+   * 显示自定义确认弹窗
+   * @param {string} keyName - 要删除的 Key 名称
+   * @returns {Promise<boolean>} 用户点击"删除"返回 true，点击"取消"或遮罩返回 false
    */
-  function showConfirm(message) {
-    confirmMessage.textContent = message;
+  function showConfirm(keyName) {
+    confirmKey.textContent = keyName;
     confirmModal.style.display = 'flex';
     return new Promise((resolve) => {
       confirmResolve = resolve;
@@ -226,7 +227,7 @@ const Popup = (() => {
       delBtn.innerHTML = '<span class="iconfont icon-shanchu1"></span>';
       delBtn.addEventListener('click', async (e) => {
         e.stopPropagation(); // 阻止冒泡，避免触发单元格编辑
-        const confirmed = await showConfirm(`确定要删除 Key「${item.key}」吗？`);
+        const confirmed = await showConfirm(item.key);
         if (!confirmed) return;
         await StorageManager.removeKey(item.key);
         await render();
