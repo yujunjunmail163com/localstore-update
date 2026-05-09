@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Local Storage Manager",
+  "version": "1.0.0",
+  "description": "Manage and edit localStorage data with inline editing support",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; font-src 'self' https://at.alicdn.com;"
+  },
+  "icons": {
+    "16": "src/logo.png",
+    "48": "src/logo.png",
+    "128": "src/logo.png"
+  },
+  "action": {
+    "default_popup": "src/popup.html"
+  }
+}
