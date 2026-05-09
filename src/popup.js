@@ -23,6 +23,8 @@ const Popup = (() => {
   const tabFavicon     = document.getElementById('tabFavicon');
   const tabDomain      = document.getElementById('tabDomain');
   const closePanel     = document.getElementById('closePanel');
+  const headerLogo     = document.querySelector('.header-logo');
+  const headerTitle    = document.querySelector('.header-title');
 
   // 快速跳转
   const jumpBtn        = document.getElementById('jumpBtn');
@@ -94,6 +96,20 @@ const Popup = (() => {
 
       const url = new URL(tab.url);
       tabDomain.textContent = url.hostname;
+
+      const isEclin = url.hostname.includes('eclincloud');
+
+      if (isEclin) {
+        headerLogo.style.display = '';
+        headerTitle.textContent = 'Eclin localstorage manager';
+        refreshBtn.style.display = '';
+        jumpBtn.style.display = '';
+      } else {
+        headerLogo.style.display = 'none';
+        headerTitle.textContent = 'Localstorage Manager';
+        refreshBtn.style.display = 'none';
+        jumpBtn.style.display = 'none';
+      }
 
       if (tab.favIconUrl) {
         tabFavicon.src = tab.favIconUrl;
