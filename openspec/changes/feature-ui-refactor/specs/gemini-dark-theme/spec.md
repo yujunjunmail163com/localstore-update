@@ -59,3 +59,25 @@
 - **AND** 主要操作按钮 SHALL 为底色 #003AA8，文字 #fff，无边框
 - **AND** 取消按钮 SHALL 为背景透明，边框 1px solid #C7D5EB
 - **AND** 关闭按钮（X 图标）点击 SHALL 触发与"取消"按钮一致的关闭逻辑
+
+### Requirement: 初始化本地开发环境数据
+
+系统 SHALL 提供"初始化"功能，快速预设本地开发环境的 localStorage 数据。
+
+#### Scenario: 白名单数据初始化
+- **WHEN** 用户点击"初始化"按钮
+- **THEN** 系统 SHALL 遍历 storageWhiteList 数组
+- **AND** 对于每个 Key，检查 localStorage 中是否已存在
+- **AND** 若 Key 不存在，SHALL 写入默认值 `http://localhost:9528`
+- **AND** 若 Key 已存在，SHALL 保持原值不变
+
+#### Scenario: 白名单排序
+- **WHEN** 表格渲染数据
+- **THEN** 属于 storageWhiteList 的 Key SHALL 排在列表最上方
+- **AND** 白名单内部 SHALL 严格按照 storageWhiteList 数组定义的顺序排列
+- **AND** 不在白名单中的 Key SHALL 排在白名单下方，保持原有顺序
+
+#### Scenario: 初始化完成反馈
+- **WHEN** 初始化过程中补充了缺失的 Key
+- **THEN** 系统 SHALL 弹出提示弹窗，内容为"初始化完成，已自动补充缺失的开发环境配置。"
+- **AND** 若所有白名单 Key 均已存在，SHALL 不弹窗，仅刷新列表

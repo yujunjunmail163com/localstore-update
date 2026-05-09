@@ -6,7 +6,7 @@
  * - 搜索过滤
  * - 新增数据（弹窗表单）
  * - 删除数据（二次确认弹窗）
- * - 刷新数据
+ * - 初始化本地开发环境数据
  */
 const Popup = (() => {
 
@@ -36,6 +36,19 @@ const Popup = (() => {
   let searchFilter = '';    // 当前搜索关键字
   let cachedData = [];      // 缓存的 localStorage 数据，避免重复请求
   let confirmResolve = null; // 自定义确认弹窗的 Promise resolve 回调
+  const recentlyAdded = new Set(); // 最近添加的 Key，排序置顶
+
+  // ========== 白名单配置（本地开发环境 Key） ==========
+  const storageWhiteList = [
+    'CTMSURL', 'CTMSV3URL', 'EDCURL', 'RTSMURL', 'ECOAURL', 'ETMFURL',
+    'TMURL', 'MAMSURL', 'ELEARNINGURL', 'MDSURL_OLD', 'language',
+    'DMURL', 'CDAURL', 'QSURL', 'IRCURL', 'PASS_AUTH', 'AIURL'
+  ];
+
+  // ========== 白名单排序映射（用于 O(1) 查找优先级） ==========
+  const whiteListOrder = new Map(
+    storageWhiteList.map((key, index) => [key, index])
+  );
 
   /**
    * 初始化
@@ -57,8 +70,8 @@ const Popup = (() => {
       renderFromCache();
     });
 
-    // 刷新按钮：重新读取 localStorage
-    refreshBtn.addEventListener('click', render);
+    // 初始化按钮：补充白名单数据后刷新
+    refreshBtn.addEventListener('click', initializeStorage);
 
     // 新增按钮：打开弹窗
     addBtn.addEventListener('click', () => {
@@ -90,6 +103,7 @@ const Popup = (() => {
       }
 
       await StorageManager.setValue(key, value);
+      recentlyAdded.add(key);
       closeModal();
       await render();
     });
@@ -145,6 +159,59 @@ const Popup = (() => {
   }
 
   /**
+   * 初始化本地开发环境数据
+   * 遍历白名单，补充缺失的 Key（默认值 http://localhost:9528），不覆盖已有数据
+   */
+  async function initializeStorage() {
+    const defaultUrl = 'http://localhost:9528';
+    let addedCount = 0;
+    for (const key of storageWhiteList) {
+      const exists = await StorageManager.keyExists(key);
+      if (!exists) {
+        const value = key === 'PASS_AUTH' ? '1' : defaultUrl;
+        await StorageManager.setValue(key, value);
+        addedCount++;
+      }
+    }
+    await render();
+    if (addedCount > 0) {
+      showNotice('初始化完成，已自动补充缺失的开发环境配置。');
+    }
+  }
+
+  /**
+   * 显示单按钮通知弹窗（复用确认弹窗结构，仅展示"确定"）
+   * @param {string} message - 通知内容
+   */
+  function showNotice(message) {
+    const bodyEl = confirmModal.querySelector('.modal-body');
+    const savedHTML = bodyEl.innerHTML;
+
+    bodyEl.innerHTML = `<p class="confirm-message">${message}</p>`;
+    confirmCancel.style.display = 'none';
+    confirmOk.textContent = '确定';
+    confirmModal.style.display = 'flex';
+
+    const closeNotice = () => {
+      confirmModal.style.display = 'none';
+      bodyEl.innerHTML = savedHTML;
+      confirmCancel.style.display = '';
+      confirmOk.textContent = '确定';
+      confirmOk.onclick = null;
+      confirmClose.onclick = null;
+      confirmModal.removeEventListener('click', backdropHandler);
+    };
+
+    const backdropHandler = (e) => {
+      if (e.target === confirmModal) closeNotice();
+    };
+
+    confirmOk.onclick = closeNotice;
+    confirmClose.onclick = closeNotice;
+    confirmModal.addEventListener('click', backdropHandler);
+  }
+
+  /**
    * 显示自定义确认弹窗
    * @param {string} keyName - 要删除的 Key 名称
    * @returns {Promise<boolean>} 用户点击"删除"返回 true，点击"取消"或遮罩返回 false
@@ -184,11 +251,28 @@ const Popup = (() => {
       ? cachedData.filter(item => item.key.toLowerCase().includes(searchFilter))
       : cachedData;
 
+    // 排序：白名单 Key 置顶（按白名单顺序），其余保持原序
+    const sorted = [...filtered].sort((a, b) => {
+      const aRecent = recentlyAdded.has(a.key);
+      const bRecent = recentlyAdded.has(b.key);
+      if (aRecent && !bRecent) return -1;
+      if (!aRecent && bRecent) return 1;
+
+      const aOrder = whiteListOrder.get(a.key);
+      const bOrder = whiteListOrder.get(b.key);
+      const aInList = aOrder !== undefined;
+      const bInList = bOrder !== undefined;
+      if (aInList && bInList) return aOrder - bOrder;
+      if (aInList) return -1;
+      if (bInList) return 1;
+      return 0;
+    });
+
     // 清空表格
     tableBody.innerHTML = '';
 
     // 无数据时显示空状态提示
-    if (filtered.length === 0) {
+    if (sorted.length === 0) {
       emptyState.textContent = '暂无 localStorage 数据';
       emptyState.style.display = 'block';
       tableContainer.style.display = 'none';
@@ -199,7 +283,7 @@ const Popup = (() => {
     tableContainer.style.display = 'block';
 
     // 逐行渲染
-    filtered.forEach((item, index) => {
+    sorted.forEach((item, index) => {
       const tr = document.createElement('tr');
       tr.dataset.key = item.key;
 
