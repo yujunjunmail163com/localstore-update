@@ -131,6 +131,15 @@ body {
   margin-bottom: 16px;
 }
 
+/* GitHub 链接图标 */
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  flex-shrink: 0;
+}
+
 /* ==========================================================
    搜索框
    ========================================================== */
